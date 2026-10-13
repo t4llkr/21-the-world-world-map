@@ -15,6 +15,7 @@
     <button id="fitBtn" class="btn">Вписать в экран</button>
     <label class="chk"><input type="checkbox" id="labelChk" checked> подписи</label>
     <label class="chk"><input type="checkbox" id="physChk" checked> физика</label>
+    <label class="chk"><input type="checkbox" id="bgChk" checked> фон</label>
     <label class="chk">раскладка
       <select id="layoutSel">
         <option value="cone" selected>конус (3D-дерево)</option>
@@ -37,6 +38,7 @@
   </div>
   <div id="main">
     <div id="bg"></div>
+    <canvas id="bgGl"></canvas>
     <canvas id="canvas"></canvas>
     <aside id="side">
       <div>

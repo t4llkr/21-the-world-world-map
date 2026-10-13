@@ -731,8 +731,10 @@ function init(){
     $('legendPanel').innerHTML=
       '<div class="pRow">версии: '+Object.entries(VERSION_COLORS).filter(([k])=>k).map(([k,v])=>'<span class="chip" style="background:'+v+'">'+k+'</span>').join(' ')+'</div>'+
       '<div class="pRow">'+PARAMS.map(p=>'<span class="chip" style="background:'+PARAM_COLORS[p]+'">'+p+'</span>').join(' ')+'</div>'+
-      '<div class="hint">пунктир — корень ('+G.nodes.get(rootId).name+'). раскладки: конус / радиальная / force. '+
-      '3D: ЛКМ — орбита, СКМ — пан, ПКМ — долли, колесо — зум, ⟲ камера — сброс. ховер по локации в списках — скриншот. скриншоты: screenshots/&lt;id&gt;.png</div>';
+      '<div class="hint">пунктир — корень ('+G.nodes.get(rootId).name+').<br>'+
+      'раскладки: конус / радиальная / force.<br>'+
+      '3D: ЛКМ — орбита, СКМ — пан, ПКМ — долли, колесо — зум, ⟲ камера — сброс.<br>'+
+      'ховер по локации в списках — скриншот.</div>';
   }
 
   /* ---------- события ---------- */
@@ -925,6 +927,89 @@ function init(){
       build(typeof DEFAULT_MAP!=='undefined'?DEFAULT_MAP:'');
     });
   } else build(typeof DEFAULT_MAP!=='undefined'?DEFAULT_MAP:'');
+
+  /* ---------- фон: WebGL-liquid (fbm + domain warping) поверх CSS-фолбэка ----------
+     Рендерится в отдельный канвас 0.35x разрешения (апскейл CSS), 30 fps,
+     на покадровую отрисовку дерева не влияет (dirty-флаг не трогаем). */
+  (function bgInit(){
+    const bgCanvas=$('bgGl'), bgDiv=$('bg'), bgChk=$('bgChk');
+    let gl=null, prog=null, uT=null, uR=null, uM=null, bgW=0, bgH=0, bgLast=0;
+    const BG_SCALE=0.35, BG_FPS=30;
+    try{
+      gl=bgCanvas.getContext('webgl',{alpha:false,antialias:false,depth:false,stencil:false});
+    }catch(e){ gl=null; }
+    if (gl){
+      const V='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+      const F=[
+        'precision mediump float;',
+        'uniform float t;uniform vec2 r;uniform vec2 m;',
+        'float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
+        'float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);',
+        '  return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),f.x),f.y);}',
+        'float fbm(vec2 p){float v=0.0;float a=0.5;',
+        '  for(int i=0;i<5;i++){v+=a*noise(p);p=p*2.03+vec2(1.7,9.2);a*=0.5;}return v;}',
+        'void main(){',
+        '  vec2 uv=(gl_FragCoord.xy-0.5*r)/r.y;',
+        '  float T=t*0.06;',
+        '  vec2 q=vec2(fbm(uv+T),fbm(uv+vec2(5.2,1.3)-T));',
+        '  vec2 w=vec2(fbm(uv+3.0*q+vec2(1.7,9.2)+0.15*T),fbm(uv+3.0*q+vec2(8.3,2.8)-0.12*T));',
+        '  float f=fbm(uv+3.0*w);',
+        '  vec3 c1=vec3(0.05,0.07,0.13);',
+        '  vec3 c2=vec3(0.10,0.16,0.30);',
+        '  vec3 c3=vec3(0.23,0.12,0.33);',
+        '  vec3 c4=vec3(0.05,0.20,0.22);',
+        '  vec3 col=mix(c1,c2,clamp(f*f*2.6,0.0,1.0));',
+        '  col=mix(col,c3,clamp(length(q)*0.7,0.0,1.0));',
+        '  col=mix(col,c4,clamp(w.x*0.5,0.0,1.0)*0.6);',
+        '  float d=distance(uv,(m-0.5)*vec2(r.x/r.y,1.0)*1.6);',
+        '  col+=vec3(0.04,0.06,0.10)*exp(-d*d*4.0);',
+        '  gl_FragColor=vec4(col,1.0);',
+        '}'
+      ].join('\n');
+      const sh=(type,src)=>{const x=gl.createShader(type);gl.shaderSource(x,src);gl.compileShader(x);
+        if(!gl.getShaderParameter(x,gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(x); return x;};
+      try{
+        prog=gl.createProgram();
+        gl.attachShader(prog,sh(gl.VERTEX_SHADER,V));
+        gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,F));
+        gl.linkProgram(prog);
+        if(!gl.getProgramParameter(prog,gl.LINK_STATUS)) throw gl.getProgramInfoLog(prog);
+      }catch(e){ prog=null; gl=null; }
+    }
+    if (!gl){ bgCanvas.style.display='none'; return; }  // WebGL нет — живёт CSS-слой
+    gl.useProgram(prog);
+    const buf=gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+    const loc=gl.getAttribLocation(prog,'p');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    uT=gl.getUniformLocation(prog,'t');
+    uR=gl.getUniformLocation(prog,'r');
+    uM=gl.getUniformLocation(prog,'m');
+    bgDiv.style.display='none';                        // WebGL жив — CSS-градиент не нужен
+    bgCanvas.style.display='block';
+    const bgResize=()=>{
+      const w=Math.max(2,Math.round(canvas.clientWidth*BG_SCALE));
+      const h=Math.max(2,Math.round(canvas.clientHeight*BG_SCALE));
+      if(w!==bgW||h!==bgH){ bgW=w; bgH=h; bgCanvas.width=w; bgCanvas.height=h; gl.viewport(0,0,w,h); }
+    };
+    window.addEventListener('resize',bgResize);
+    let bgMouse=[0.5,0.5];
+    window.addEventListener('mousemove',ev=>{ bgMouse=[ev.clientX/window.innerWidth,1-ev.clientY/window.innerHeight]; });
+    function bgFrame(now){
+      requestAnimationFrame(bgFrame);                  // цепочка жива всегда; пауза — пропуском кадров
+      if(!bgChk.checked||document.hidden) return;
+      if(now-bgLast<1000/BG_FPS) return;
+      bgLast=now;
+      bgResize();
+      gl.uniform1f(uT,now/1000);
+      gl.uniform2f(uR,bgW,bgH);
+      gl.uniform2f(uM,bgMouse[0],bgMouse[1]);
+      gl.drawArrays(gl.TRIANGLES,0,3);
+    }
+    requestAnimationFrame(bgFrame);
+  })();
 
   loop();
 }
