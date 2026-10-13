@@ -65,3 +65,7 @@ select{background:#1b1f27;color:#dfe3ea;border:1px solid #2c3242;border-radius:6
 #edgePanel .epHead{display:flex;gap:6px;align-items:center;font-weight:700;margin-bottom:6px;font-size:13px}
 #edgePanel .epX{margin-left:auto;background:none;border:none;color:#7b8494;cursor:pointer;font-size:13px;padding:0 2px}
 #edgePanel .epX:hover{color:#fff}
+
+/* селекты пути — оба на одной строке */
+#pathPanel .pRow{flex-wrap:nowrap}
+#pathPanel select{flex:1;min-width:0;max-width:none}
