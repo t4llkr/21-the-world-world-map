@@ -117,6 +117,7 @@ function parseMap(text){
     if (cur && (m = line.match(/^\s*(.+?)\s+-\s+(.+?)(?:\s{2,}(.+))?$/))){
       let label = m[1].trim();
       if (sub) label = sub + ' › ' + label;
+      if (/\[\?+\]/.test(m[2])){ skipped.push(t); continue; }  // сомнительная связь [?] — в карту не идёт
       const effects = extractEffects(m[3]||'');
       const conds   = extractConds(m[1]);
       const tgt = extractTarget(m[2]);
@@ -261,7 +262,8 @@ function init(){
   function centerOn(id){
     const n=G.nodes.get(id); if (!n) return;
     const p=proj(n);
-    view.x += p.x-CW/2; view.y += p.y-CH/2;
+    if (mode3d){ view.x -= p.x-CW/2; view.y -= p.y-CH/2; } // 3D: пан прибавляется к экрану
+    else       { view.x += p.x-CW/2; view.y += p.y-CH/2; }
     wake();
   }
 
@@ -391,7 +393,7 @@ function init(){
     pathEdges=new Set(); pathNodes=new Set(); pathSteps=null; walk=null;
     if (layout==='force'){ for (let s=0;s<450;s++) physics(); fit(); }
     else applyLayout();
-    fillSelects(); renderSide(); wake();
+    renderSide(); wake();   // fillSelects вызывается внутри renderSide, после создания селектов
   }
 
   function fillSelects(){
@@ -733,7 +735,8 @@ function init(){
       '<div class="pRow">'+PARAMS.map(p=>'<span class="chip" style="background:'+PARAM_COLORS[p]+'">'+p+'</span>').join(' ')+'</div>'+
       '<div class="hint">пунктир — корень ('+G.nodes.get(rootId).name+').<br>'+
       'раскладки: конус / радиальная / force.<br>'+
-      '3D: ЛКМ — орбита, СКМ — пан, ПКМ — долли, колесо — зум, ⟲ камера — сброс.<br>'+
+      '3D: ЛКМ — орбита, СКМ — пан, ПКМ — долли, колесо — зум.<br>'+
+      '«вписать» — сброс ракурса камеры + фит (в 3D), просто фит (в 2D).<br>'+
       'ховер по локации в списках — скриншот.</div>';
   }
 
@@ -828,7 +831,6 @@ function init(){
   // раскладки / сортировка / 3D
   $('layoutSel').addEventListener('change', e=>{ layout=e.target.value; applyLayout(); });
   $('sortSel').addEventListener('change', e=>{ sort=e.target.value; applyLayout(); });
-  $('camReset').addEventListener('click', ()=>{ rot.x=0.5; rot.y=0.6; camDist=1200; fit(); });
   $('mode3dChk').addEventListener('change', e=>{ mode3d=e.target.checked; fit(); });
 
   canvas.addEventListener('contextmenu', ev=>ev.preventDefault());
@@ -911,22 +913,36 @@ function init(){
     wake();
   },{passive:false});
 
-  $('fitBtn').onclick=fit;
+  $('fitBtn').onclick=()=>{ rot.x=0.5; rot.y=0.6; camDist=1200; fit(); };  // «вписать» = сброс ракурса + фит
   canvas.addEventListener('dblclick', fit);
-  $('defaultBtn').onclick=()=>build(typeof DEFAULT_MAP!=='undefined'?DEFAULT_MAP:'');
-  $('fileBtn').onchange=()=>{
-    const f=$('fileBtn').files[0]; if (!f) return;
-    const rd=new FileReader();
-    rd.onload=()=>build(String(rd.result));
-    rd.readAsText(f);
-    $('fileBtn').value='';
-  };
 
-  if (typeof fetch==='function'){
-    fetch('data/map.txt').then(r=>{ if(!r.ok) throw 0; return r.text(); }).then(build).catch(()=>{
-      build(typeof DEFAULT_MAP!=='undefined'?DEFAULT_MAP:'');
+  // старт: карта читается напрямую из data/map.txt (нужен статический сервер).
+  // Через file:// браузер запрещает чтение файлов — показываем инструкцию.
+  fetch('data/map.txt')
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); })
+    .then(build)
+    .catch(err=>{
+      const url=new URL('data/map.txt', location.href).href;
+      const msg=(err && err.message) ? err.message : String(err);
+      let hint='';
+      if (location.protocol==='file:')
+        hint='Страница открыта как файл (file://) — браузеры запрещают странице чтение локальных файлов. Запустите статический сервер: <code style="background:#1b1f27;padding:2px 6px;border-radius:4px">python3 -m http.server 8000</code> и откройте http://localhost:8000';
+      else if (/HTTP 404/.test(msg))
+        hint='Сервер ответил 404 — он отдаёт не ту папку. Сервер нужно запускать из корня приложения (там, где лежит index.html), и открывать страницу по тому же адресу.';
+      else if (/Failed to fetch|NetworkError|загрузки|Load/i.test(msg))
+        hint='Сеть недоступна: страница, возможно, всё же открыта как файл, либо блокировщик/антивирус режет запрос к '+location.host+'.';
+      else
+        hint='Ошибка при разборе карты — пришлите текст ошибки разработчику.';
+      const d=document.createElement('div');
+      d.style.cssText='position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:#0d0f13;color:#dfe3ea;font:14px system-ui';
+      d.innerHTML='<div style="max-width:560px;line-height:1.7;padding:24px">'+
+        '<h2 style="margin:0 0 12px">Карта не загрузилась</h2>'+
+        '<div style="background:#161a21;border:1px solid #2c3242;border-radius:8px;padding:10px;margin-bottom:12px;font-size:12px">'+
+        '<div>запрошено: <code>'+url+'</code></div>'+
+        '<div>ошибка: <code>'+msg+'</code></div></div>'+
+        hint+'</div>';
+      document.body.appendChild(d);
     });
-  } else build(typeof DEFAULT_MAP!=='undefined'?DEFAULT_MAP:'');
 
   /* ---------- фон: WebGL-liquid (fbm + domain warping) поверх CSS-фолбэка ----------
      Рендерится в отдельный канвас 0.35x разрешения (апскейл CSS), 30 fps,

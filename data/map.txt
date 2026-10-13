@@ -368,7 +368,7 @@ surface 8-12 - поворот карты вверх ногами
 двери за спавном - foxboro (v4)												-
 victoria's secret - nifelheim												abyss +1 SAN +1
 дверь в гик-магазин - Lroom (v2)											-
-крайний левый угол - basement(alt) (v4)										lucid +2
+крайний левый угол - basementalt (v4)										lucid +2
 дверь за пальмами - city													surface +2
 white house - saturnus(nightmare) (v2)										surface +1
 neiman - sotc (v3)															surface +1

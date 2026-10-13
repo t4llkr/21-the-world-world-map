@@ -10,8 +10,6 @@
 <div id="app">
   <div id="topbar">
     <span id="logo">&#9790; dream map</span>
-    <label class="btn">Загрузить map.txt<input id="fileBtn" type="file" accept=".txt" hidden></label>
-    <button id="defaultBtn" class="btn">Карта по умолчанию</button>
     <button id="fitBtn" class="btn">Вписать в экран</button>
     <label class="chk"><input type="checkbox" id="labelChk" checked> подписи</label>
     <label class="chk"><input type="checkbox" id="physChk" checked> физика</label>
@@ -23,7 +21,7 @@
         <option value="force">force-directed</option>
       </select>
     </label>
-    <label class="chk">сортировка
+    <label class="chk" style="display:none">сортировка
       <select id="sortSel">
         <option value="default" selected>по файлу</option>
         <option value="name">по имени</option>
@@ -33,7 +31,6 @@
       </select>
     </label>
     <label class="chk"><input type="checkbox" id="mode3dChk"> 3D</label>
-    <button id="camReset" class="btn" title="сброс углов камеры и фит">⟲ камера</button>
     <span id="graphStats"></span>
   </div>
   <div id="main">
@@ -54,9 +51,6 @@
 </div>
 <div id="shotTip"></div>
 <div id="edgePanel"></div>
-<div id="shotTip"></div>
-<div id="edgePanel"></div>
-<script src="data/default-map.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
