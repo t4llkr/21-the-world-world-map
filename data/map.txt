@@ -1,0 +1,770 @@
+параметр функции ClickScript (TriggerLevel?) с названием локации для перехода - \nLevel: 
+
+------------------------------
+v1:
+arc [остров в океанеанеане]:
+лодка - room (beach)														surface +1
+звездочёт - arcmoon															abyss +1 gestalt +2
+глобус - library															-
+купидон - sky																-
+мольберт - desertdoors														-
+звездоголовый - arcstar														surface +1 lucid +2
+статуя в фонтане - random													-
+могила - ass																-
+бутылка - bottle															-
+солнцеголовый - turrisastral												lucid +2 gestalt +1
+скелет - scene2alt															-
+звезда (корабль) - ike (v3)													abyss +1 gestalt +1
+корабль - sotc																gestalt +1
+
+arcmoon [остров, ночная версия]:
+лодка - water																-
+глобус - room(beach)														-
+купидон - sky																-
+мольберт - arc																-
+бутылка - bottle															-
+месяцеголовый - baby (?)													abyss +2
+место на полу для ритуала - arcmoonalt										-
+звездоголовый - arcstar														surface +1 lucid +2
+портал - room(astral)														gestalt +1
+чел в синем - room(astral)													gestalt +2
+скелет - scene2alt															-
+масочник - ближе всех к божествам, рядом с бутылкой
+
+arcmoonalt [падение юпитера]:
+портал - room(astral)														-
+после падения - arcsun														-
+
+arcstar [остров с кучей кораблей]:
+мольберт - arc																-
+любой звездоголовый - scene2												-
+бутылка - bottle															-
+скелет - scene2alt															-
+
+arcsun [остров после падения юпитера]:
+мольберт - arc																-
+через некоторое время - room												-
+
+ass [кладбище]:
+ворота - room																-
+скелет - nifelheim															abyss +1
+
+bottle [внутри бутылки]:
+книги - water																lucid +1 gestalt +1
+
+car [поездка с костей на машине]:
+дефолт, космос - moonpalace													
+abyss > 4, толпа - foxboro (v4)													-
+lucid > 5, литтлбен - hospital													-
+gestalt > 5, психодел - tv														-
+
+cave [пещера]:
+статуэтка на старте - taoism												-
+скелет - hospital															-
+маска - mask																-
+триггер в комнате - room(nightmare)											-
+во время активации триггера можно успеть нажать по предметам в комнате:
+выключатель - room(astral)													-
+шкаф - cave																	-
+кровать - room(day)/room(nightmare)											-
+карта мира - main_scene														-
+стойка - library															-
+комп - tv																	-
+картина - arc																-
+
+city [переулок городка]:
+конец коридора - car														surface +1
+лежащий на бочке челик - prison												abyss +1
+телевизор - tv																lucid +1
+бутылка - bottle															surface +1
+cityEvent: freedom -> челик в маске среди банды
+ребёнок в смокинге - откуда [???]
+
+city(nightmare) [переулок, хоррор-вариант]:
+конец коридора - mask														-
+
+closet [мику с лягушками]:
+машина - car																surface +1
+мику - room(astral)															surface +1
+
+hospital [больница]:
+abyss 7-15 - автотелепорт в baby
+карта "мир" - library, второй ярус											lucid +1
+телек - tv																	-
+дверь на лестницу - car														surface +1
+плакат с анатомией - random													surface +1
+бутылка - bottle															gestalt +1
+скелет - ass																abyss +1
+дверь с кровью - hospital(nightmare)										-
+
+hospital(nightmare) [больница, хоррор-версия]:
+дверь с кровью - hospital													-
+бутылка - bottle															gestalt +1
+врач - manor																gestalt +1
+скелет, плакат со скелетом - ass											abyss +1
+гора черепов - baby	(кликабельно?)											abyss +1
+за черепами [досягаемо?]:
+карта - room																-
+телевизор - tv																-
+дверь - car																	-
+
+island [маленький остров]:
+лодка - arc																	-
+птиц прилетел - room														-
+
+littleben [бигбен]:
+стена с городом - city														surface +1
+бигбен - random2															lucid +1
+
+library [библиотека]:
+книга рядом со спавном - hedgemony (v2)										gestalt +1
+книга на втором этаже - turrisastral										lucid +1
+глобус - arcmoon															lucid +1
+секретка - random2															abyss +1
+упасть - room																-
+libraryEvent: freedom -> масочник рядом с книгой на втором этаже
+
+manor [лягушки с кертейкером]:
+от старта налево-налево-налево - main_scene									-
+дверь - desertdoors 														surface +1
+чорт - prison																abyss +1 SAN +1
+тёмный месяцеголовый в углу толпы лягушек - arcmoon							gestalt +3
+чорт в тёмном проходе - room(nightmare)										gestalt +3 SAN +1
+manorEvent: при 10<=abyss<=14 (если отыгралась катсцена с календарём) стена справа убирается, в коридоре стоит люцифер с лягушкой и месяцеголовым в руках. далее frogSaved/moonSaved
+масочник - рядом с дверью в main_scene
+
+mask [маски-шоу]:
+картина в маске - ike (v3)													abyss +2
+зелёный шар - scene2														surface +1
+упасть - room																-
+
+moon [луна]:
+дерево - mtSnow(alt) (v4)													lucid +1 gestalt +1
+НЛО - tornado																lucid +2
+убежать - room																-
+
+nifelheim [хэллоуин с днём валентина]:
+проход в домик - closet														gestalt +1
+чел с шапкой - arc															abyss +2 SAN +1
+врач - hospital																abyss +2
+упасть - nkitchen (v4), комната												-
+
+random [психоделичное здание посреди нихуя]:
+дверь в здание - mall (v2)													surface +1
+окно в правом крыле здания - cave											abyss +2
+йобаскример - room															abyss +3 SAN +3
+масочник - на крыше здания; можно попасть только через коров, спавнящихся при abyss
+
+random1 [подсобка]:
+капсула - room(eye)															gestalt +1
+спуск, будка - arc															surface +1
+
+random2 [дали момент]:
+упасть - hedgemony (v2)														abyss +1 gestalt +2 SAN +1
+скелет - scene2alt															abyss +1
+камень - taoism																-
+
+room [стартовая комната]:
+gestalt 4-8 - вытягивание комнаты вширь (50%+SAN)
+surface 4-8 - вытягивание комнаты вверх (50%+SAN)
+стойка с фигурками - mall													surface +2
+карта - library																lucid +1 gestalt +1
+окно - city [?]																abyss +1 lucid +1
+комп - tv																	lucid +2
+картина - arc																surface +1 lucid +1
+вентилятор - tornado														abyss +1 lucid +1
+маски - mask																abyss +1 gestalt +1
+дверь - Lroom																surface +1
+выключатель, светильник - room(astral)										-
+шкаф - closet1																abyss +2
+меч - random																abyss +1 gestalt +1
+фото на стене - mtSnow (v4)													surface +1 lucid +1
+лампа - room(astral)														abyss +1 gestalt +1
+кровать - bed																abyss +2
+
+room(astral) [стартовая комната, ночной вариант]:
+дверь - Lroom(night)														-
+выключатель - room															-
+шкаф - closet																-
+меч - random																-
+фото на стене - littleben													-
+кровать - cave																-
+окно - arcmoon																-
+маски - mask																-
+
+room(day) [стартовая комната, полёт на кровати]:
+шкаф - closet																-
+стойка - library															-
+карта - main_scene [?]														-
+комп - tv [?]																-
+вентилятор - tornado [?]													-
+маски - mask [?]															-
+картина - arc [?]															-
+конец карты - sky															???
+
+room(eye) [стартовая комната, триповый вариант]:
+выключатель - room															-
+шкаф - closet																-
+фото - littleben															surface +1
+кубы - city(nightmare)														abyss +1
+глаз - mall																	surface +1
+маленькие маски - mask														-
+
+room(nightmare) [стартовая комната, страшнавырубай]:
+выключатель - room(astral)													-
+шкаф - cave																	-
+кровать - room(day)															-
+карта - main_scene															-
+стойка - library															-
+картина - arc																-
+после падения (первое появление в локации) - один респавн					SAN +1
+
+scene2 [качалочка]:
+surface 5-10, gestalt>lucid - ёлки, дождь, затопление
+подсобка:
+дверь за спавном - turrisastral												-
+конец коридора - moon [?]													lucid +1
+качалка:
+магнитофон - room															surface +1
+дверь слева-бимбоунитаз - water												-
+бутылка - bottle															surface +1 gestalt +1
+дверь справа, через раздевалку - moon										lucid +1
+
+scene2alt [качалочка для константинов]:
+унитаз - water																surface +1
+скелет в раздевалке - ass													-
+бутылка - bottle															-
+череп за дверью - random													-
+
+sky [небесный паркур]:
+кровать - room(day)															-
+упасть - Lroom(sky)															-
+пройти - room(eye)															surface +1 abyss +1 lucid +1 gestalt +1
+
+spa [горячие источники]:
+abyss 14-20 - убирает всех неписей
+бутылка - bottle															-
+статуя - room(astral)														-
+русалка - water																-
+вентиляция - ike (v3)														abyss +2 gestalt +1 SAN +1
+обезьяна в маске - hedgemony (v2)											-
+
+tornado [поле с мельницей]:
+убежать - room																-
+попасть под торнадо - sky													surface +1
+НЛО - moon																	lucid +2
+ночное время, солнцеголовый - turrisastral									gestalt +2
+
+TV [мир помех]:
+выпасть - galaxycastle														-
+телек с поварами - nkitchen	(v4)											lucid +1
+пять телеков рядом с диваном - tower										lucid +1
+комп - room																	-
+портал внизу - manor														gestalt +1
+внутри башенки из телевизоров - mallalt										abyss +2
+
+water [маленькая синяя локация с водой]:
+лодка - island																-
+унитаз - scene2																surface +1
+русалка на диване - spa														-
+
+v2
+babayaga [избушка на курьих ножках]:
+за пределами избушки:
+кувшин - hedgemony															gestalt +1
+корова - random																abyss +1
+избушка:
+дверь за спавном - desertdoors												surface +1
+маски - mask																-
+плакаты с анатомией - random												lucid +1
+глаз - room(eye)															abyss +1
+картина рядом с чаном - nkitchen											abyss +1 lucid +1
+
+baby [детей] -> baby2 [детей 2] -> room										abyss +1 SAN +1
+
+desertdoors [пустыня с кучей дверей]:
+по часовой стрелке:
+дверь на холме (мементо мори) - awaken (v4)									abyss +1
+зелёная дверь - babayaga (v2)												gestalt +1
+за зелёной дверью - scene2													surface +1
+синяя дверь - mtSnow(alt) (v4)												gestalt +1
+за синей дверью - ike (v3)													abyss +1 gestalt +1
+светлая металлическая дверь - hospital										abyss +1
+дверь с засветом - saturnus (v2)											surface +1
+тёмная металлическая дверь - tower (v2)										lucid +1
+за тёмной металлической (гуччи-дверь) - prison (v2)							abyss +1
+тёмная деревянная - basement (v4)											abyss +1 gestalt +1
+светлая деревянная - manor													abyss +1
+круглая деревянная - hedgemony (v2)											gestalt +1
+выйти - чёрный экран [?]
+
+Droom [бревно]:
+дверь - Lroom																-
+выключатель - room(astral)													-
+шкаф - cave																	-
+приблизиться к полену - Droom(nightmare)									gestalt +1 SAN +1
+нажать по полену - room(day)												-
+
+Droom(nightmare) [бревно проснулось]:
+дверь - Lroom																-
+выключатель - room(astral)													-
+шкаф - cave																	-
+нажать по полену - room(day)												-
+
+galaxycastle [сюрная полоса препятствий]:
+портал в начале - desertdoors												-
+портал в конце - desertdoors												-
+
+hedgemony [лабиринт из холмов с синим лесом]:
+tower event - [???]
+mushroom event - [???]
+книга за спавном - desertdoors												surface +1
+месяцеголовый - darker														abyss +1 gestalt +1
+обезьяна в маске - spa														surface +1
+синий лес, скворечник - birdhouse (v4)										surface +1
+синий лес, женщина в платье - moonpalace (v2)								gestalt +1
+дверь за спавном 4 - closet1												gestalt +2
+пройти сквозь стену с маской, столик с книгой - moon								lucid +1
+ещё одна маска (есть проход?) - ???
+масочник - рядом с тумбочкой или я хз что это
+
+hivemind [соты]:
+шар с лицом - baby															-
+марионетка (внизу) - saturnus												-
+упасть - room																-
+
+light [смотри в кресло]:
+дверь за спавном - desertdoors												-
+дверь впереди - Lroom														-
+за дверью-кресло - prison													-
+
+Lroom [холл дома]:
+со спины по часовой стрелке:
+room																		-
+Droom (v2)																	-
+mroom (v4)																	-
+bathroom2																	-
+напротив - closet (некликабелен)											abyss +1 gestalt +1
+телевизор - tv																-
+окно - backyard (v3)														surface +1 gestalt +2
+входная дверь - foxboro (v4)												-
+левее - cave																-
+часы - birdhouse															-
+коридор в конце:
+левая ближайшая - bathroom (v3)												-
+дальше - cave																abyss +2
+правая ближайшая - basement (v4)											gestalt +1
+дальше - hospital															abyss +1 lucid +1
+холодильник - nkitchen														surface +1 lucid +1
+
+main_scene [щитпост-локация с кучей хуйни и всратой горой]:
+маска - mask																-
+унитаз - scene2																-
+свет в домике с текстурой неба - scene1										-
+вершина горы - истинная концовка
+
+mall [торговый центр]:
+surface 8-12 - поворот карты вверх ногами
+двери за спавном - foxboro (v4)												-
+victoria's secret - nifelheim												abyss +1 SAN +1
+дверь в гик-магазин - Lroom (v2)											-
+крайний левый угол - basement(alt) (v4)										lucid +2
+дверь за пальмами - city													surface +2
+white house - saturnus(nightmare) (v2)										surface +1
+neiman - sotc (v3)															surface +1
+club monaco - ike (v3)														abyss +1 gestalt +1
+витраж с зодиаком, при перевёрнутом магазине - arcmoon						abyss +1 gestalt +2
+упасть через дыру в потолке - galaxycastle									gestalt +1
+масочник - в магазине
+
+mallalt [торговый центр, ночной вариант]:
+двери за спавном - Lroom(v2)												-
+victoria's secret - nifelheim												abyss +1 SAN +1
+дверь в гик-магазин - Lroom (v2)											-
+дверь за пальмами - city													surface +2
+white house - saturnus(nightmare) (v2)										surface +1
+телефон - tesseract															lucid +2
+настольная лампа - room(astral)												abyss +1 gestalt +1
+двери в правой стороне - city												surface +2
+упасть через дыру в потолке - galaxycastle									gestalt +1
+
+moonpalace [площадка посреди космоса]:
+лягушки - manor																abyss +1
+ворота в луну - moon														lucid +1
+упасть - room																-
+
+prison [гачи-тюрьма]:
+спавн с шляпником:
+  дверь за спавном - Lroom (v2)												surface +1
+  чуть дальше - scene2														surface +1
+  комната с креслом из light за пределами карты - desertdoors				-
+  унитазы - water															-
+спавн с масочником:
+  дверь за спавном - desertdoors											surface +1	
+  масочник за решёткой - FREEDOM, city										-
+
+saturnus [остров под грудами костей]:
+марионетка внизу - saturnus(nightmare) (v2)									abyss +1
+(вверху) - desertdoors														surface +1
+марионетка в домике - babayaga (v2)											-
+мельница - tornado															-
+месяцеголовый - arcmoon														-
+
+saturnus(nightmare) [остров под грудами костей, мрачная версия]:
+чел с черепом - prison														abyss +1
+чел с чаном на голове - babayaga											gestalt +1
+марионетка - saturnus														-
+унитаз - tower (v2)															-
+за забором, марионетка на костях - desertdoors								-
+в недрах костей находится секретная корова
+
+taoism [локация с шивой и шестиугольными платформами]:
+статуя - spa																surface +1
+плакат - babayaga (v2)														gestalt +1
+чел в кристаллах - mtSnow (v4)												gestalt +2
+выпасть - basement (v4)														abyss +1
+
+tower [пещера с розеткой]:
+фаллоимитатор - desertdoors													surface +1
+вентиляция - closet1														lucid +1
+конец уровня -  scene2														lucid +1
+
+v3:
+backyard [задний двор]:
+дверь за спавном - Lroom (v2)												-
+скворечник - birdhouse (v4)													surface +1
+портал слева - target3:
+  китаёза - dojo (v3)														abyss +1 gestalt +1
+  портал - дом
+портал по лестнице - target1:
+  секрет - s'eeser															surface +1 abyss +1 lucid +1 gestalt +1
+  НЛО (10<=lucid<=15?) - hospital(nightmare)								lucid +2
+  внизу, мольберт - desertdoors												-
+  портал внизу - target8, мельница
+  портал сзади - дом, лестница
+  портал рядом с секреткой - лес
+портал за деревьями - target5:
+  избушка - babayaga (v2)													gestalt +2
+  портал за спиной - дом
+  другой портал - коровы
+упасть - sky																surface +1 abyss +1
+масочник - на мельнице (target8 - коровы, через забор налево, упасть)
+
+bathroom [ванная БЕЗ ЛУНЫ НА СТЕНЕ]:
+дверь - Lroom (v2)															-
+кран - tower (v2)															gestalt +2
+картина - backyard (v3)														surface +1 gestalt +1
+унитаз - scene2																surface +2
+тумбочка - babayaga (v2)													abyss +1 gestalt +1
+душ - ike (v3)																abyss +1 lucid +1
+
+bed [огромная кровать с развилками]:
+пагода с луной - dojo (v3)													surface +1 gestalt +1
+ворота - sotc (v3)															surface +1 gestalt +1
+телескоп - turrisastral (v3)												surface +1 lucid +1
+лицо - ike (v3)																abyss +2
+
+closet1 [нарния]:
+дверь обратно - room														-
+вентиляция - tower (v2)														lucid +1
+самая дальняя дверь - hedgemony (v2)										gestalt +2
+выключатель на обратном пути от двери из длинного коридора - manor			surface +1 lucid +1
+
+dojo [спортзал]:
+звездоголовый - arc															surface +2
+surface[0], abyss:
+  плакат за стенами - mask													abyss +1 gestalt +1
+  сумоисты - ike (v3)														surface +1 gestalt +1
+  инь-янь - taoism															gestalt +2
+  китаец перед луной - moonpalace (v2)										abyss +1 gestalt +1
+  луна - bed (v3)															abyss +1 gestalt +1
+  плакат слева - scene2														surface +1 lucid +1
+  плакат посередине - sky													surface +1 lucid +1
+  плакат справа - hedgemony (v2)											abyss +1 gestalt +1
+surface[1-3]:
+  качок - cave																abyss +1 lucid +1
+  плакат с анатомией (оба) - hospital										surface +1 abyss +1
+  шкафчик рядом с качком - scene2											surface +2
+  телевизор - tv															lucid +2
+
+ike [адский особняк]:
+скример возле статуи - awaken (v4)											abyss +1 gestalt +2
+двери рядом со спавном - tower (v2)											abyss +1 lucid +1
+портал за дверями слева - prison											abyss +1 gestalt +1 SAN +1
+окна в заднем крыле - desertdoors (v2)
+левое крыло:
+  двери слева - library														surface +1 lucid +1
+  китаёза - dojo (v3)														abyss +1 gestalt +1
+правое крыло:
+  плакат - room(beach)														surface +1 lucid +1 SAN +1
+  левитирующий чел - tesseract (v4)											gestalt +2
+крайнее правое гетто:
+  бутылка - bottle															surface +1
+  двери - city																surface +2
+второй этаж, если смотреть на статую:
+  левые двери - hospital													abyss +1 gestalt +1
+  правые двери - mall (v2)													surface +1 gestalt +1
+  чёрт - Lroom(night)														abyss +2
+
+s'eseer [секретная корова]:
+подождать - room															-
+нажать на корову [?] - random												-
+
+sotc [огромная локация в горах под моушн-блюром]:
+алтарь около спавна - desertdoors											abyss +1 gestalt +1
+маска - mask																-
+дерево за мостиком - ass													surface +1 abyss +1 gestalt +1
+упасть с мостика/любого ближайшего места - room								abyss +1
+звездоголовый (90% шанс появления) - tower									abyss +1 lucid +1
+челик с бычьей головой в горах (90% шанс появления) - mask					lucid +2 gestalt +1
+гитарист в лесу (65% шанс появления) - Lroom								surface +2
+символ в лесу - tower														lucid +1 gestalt +1
+дерево с лицом в лесу (45% шанс) - Saturnus									surface +2 lucid +1 gestalt +1
+китаёза в горах (55% шанс появления) - dojo									abyss +2 gestalt +2
+символ в пещерах - cave														abyss +1 lucid +1
+статуя с глазом в пещерах - room(eye)										gestalt +2
+челик на кортах под деревом, на возвышенности рядом с пещерой (55%) - light surface +1 abyss +1 lucid +1
+в зоне видимости от дерева, висящий челик на камне (55%) - main_scene		surface +5 abyss +5 lucid +5 gestalt +5
+танцующий на пиковой точке челик - desertdoors								abyss +1 lucid +1 gestalt +2
+свернуть по песчаной тропе налево-налево, символ - arcstar					surface +1 abyss +1 lucid +2 gestalt +1
+направо по песчаной тропе, огненная дыра - prison							abyss +3 lucid +1
+алтарь с водой - spa														abyss +1 gestalt +1
+алтарь внизу - hedgemony													surface +1 abyss +1 gestalt +1
+могила - ass																abyss +1 gestalt +1
+левитирующий над могилой чел - room(astral)									gestalt +2
+упасть правее от могилы - sky												surface +1 lucid +1
+лодка - arc																	surface +1
+символ рядом с лодкой - bed 												abyss +1 gestalt +1
+храм в конце карты, прыгнуть через окно в воду - bottle						surface +1 abyss +2 gestalt +4
+
+turrisastral [обиталище солнцеголового]:
+подвал:
+левая стена - desu troy, за ней - дверь - scene2							abyss +1
+большая расписная шестерёнка на стене рядом со спавном - arcmoon			gestalt +1
+вывеска левее (такая же в библиотеке) - babayaga							gestalt +1
+книга - library, второй ярус												lucid +1
+солнцеголовый рядом с окном - arc											lucid +1
+
+v4:
+arcfinal [остров в океане, конечная]:
+ВСЕ ЗНАЧЕНИЯ ОБНУЛЯЮТСЯ
+масочник - единственная цель
+
+awaken [церковь]:
+подвал:
+  любой из грешников - tower												abyss +1 gestalt +1
+основа:
+  челик рядом с подъёмом к дверям - room									-
+  солнцеголовый - turrisastral												surface +1 lucid +1
+  лягушка - manor															surface +1 gestalt +1
+  ангелы - sky																surface +1 lucid +1 gestalt +1
+масочник - в спальне. можно заспавниться через darker, кровавый месяц в кольцах
+
+basement [подвал]:
+дверь за спавном - Lroom													-													
+дыра в комнате с телевизором - tower										abyss +1
+телевизор - tv																-
+книжная полка - library														lucid +1 gestalt +1
+маска - mask																abyss +1 gestalt +1
+стена чуть правее - desu troy, дверь - desertdoors							-
+комп - basementalt															abyss +1 SAN +3
+масочник - комната с краном, нажать на стену справа от крана три раза, пройти дальше
+
+basementalt [подвал задрота]:
+гундам или кто это хз, белый трансформер крч - turrisastral					lucid +1
+дверь - Lroom																-
+телевизор - tv																-
+чёрный челик - mtSnow(alt)													lucid +2
+маска - mask																abyss +1 gestalt +1
+
+bathroom2 [ванная С ЛУНОЙ НА СТЕНЕ]:
+кран - scene2																gestalt +2
+луна над ванной - arcmoon													lucid +1 gestalt +1
+дверь за спавном - Lroom(night)												-
+дверь слева - mRoom															-
+
+birdhouse [скворечник]:
+окно - Lroom(sky)															surface +1 lucid +1
+часы - littleben															surface +1 gestalt +1
+сова за ближайшей к с спавну дверью - library								surface +1 lucid +1
+глобус рядом с совой (не работает) - arcmoon								lucid +1
+закрытый птицей проход к двери [когда открывается?] - челик с бычьей головой - sotc				surface +1 gestalt +1
+
+darker [тёмная локация с водой и, возможно, руками]:
+корабль - sotc																surface +1
+негативные челики - hospital												surface +2
+проход между лампами - если freedom, то кровавый месяц - awaken, спальня	abyss +1 gestalt +1
+
+foxboro ["улица"]:
+дверь - Lroom																-
+колонна - desertdoors														surface +1 abyss +1
+пройтись по перекладине сквозь стенку, левитирующий чел - nix				surface +3
+с небольшим шансом, розовый чубрик - ike									abyss +1 lucid +1 gestalt +1
+масочник - там же, где и левитирующий чел, за углом, рядом с надписью hello
+
+Lroom(night) [холл дома, адская версия]:
+room(astral), Droom, mRoom, bathroom2										-
+входная дверь - desertdoors													-
+левее - cave																-
+телевизор - tv																-
+китаец на диване - dojo														surface +1 lucid +1
+место для часов - birdhouse													-
+самоубийство - hospital														abyss +2 SAN +3
+холодильник - nkitchen														surface +1 lucid +1
+левая ближняя дверь - bathroom												-
+дальняя - cave																abyss +2
+правая ближняя - random1													abyss +1 gestalt +1
+дальняя - hospital															abyss +1 lucid +1
+стражник посередине - prison												abyss +1 gestalt +1
+маска на втором ярусе - mask												abyss +1 gestalt +1
+пробраться на крышу, люцифер - light, комната с креслом						abyss +1 gestalt +1 SAN +1
+упасть - nifelheim															abyss +1 SAN +1
+
+Lroom (sky) [холл дома, эстетичная версия]:
+room, droom, mroom, bathroom2 												-
+входная дверь - foxboro														-
+левее - cave																-
+телевизор - tv																-
+окно - backyard																surface +1 gestalt +2
+часы - birdhouse															-
+холодильник - nkitchen														surface +1 lucid +1
+левая ближняя - bathroom													-
+дальняя - cave																abyss +2
+правая ближняя - basement													abyss +1 gestalt +1
+дальняя - tesseract															abyss +1 lucid +1
+
+mRoom [комната с индикатором уровня сна]:
+дверь за спавном - Lroom													-
+левее - bathroom2															-
+ещё левее - hedgemony														gestalt +1
+
+mtSnow [снежная локация]:
+челик в башне - dojo														gestalt +2
+лес, против часовой стрелки:
+  кристалл рядом с жабой - spa												surface +2
+  пиксельные челики - ass													abyss +1 lucid +1
+
+mtSnow(alt) [неоновый мир]:
+башня - tv																	lucid +1
+лягушка - closet															-
+галактический челик - backyard												abyss +1 lucid +1
+пиксельные челики - ass														abyss +1 lucid +1
+
+nix [NotLikeThis]:
+автотелепортация - foxboro													-
+
+nkitchen [ночной городок с поварами и голыми детьми xxs cp]:
+пузырь с комнатой:
+  дверь - Lroom																surface +1
+  выключатель - room(astral)												-
+  шкаф - closet1															abyss +2
+  окно - city																abyss +1 lucid +1
+  у пола нет коллизии; спавн на кровати
+луна - moon																	-
+основа:
+  третье окно с конца на здании слева от спавна, третье окно с ближнего конца правого крыла здания с телевизором - cave (abyss +2)
+  телевизор - tv															lucid +1
+  челик в маске - mask														abyss +1 gestalt +1
+  упасть (ДА, ТУТ МОЖНО ДОЛЕТЕТЬ ДО ТРИГГЕРА) - galaxycastle				-
+
+room(beach) [стартовая комната на пляже]:
+стенд с птицей - island														abyss +1
+лодка - sotc																surface +1
+комната:
+  развилки те же, что и в room, кроме карты - main_scene					-
+
+skyscraper [небоскрёбы]:
+развилок нет. да и вообще эта локация недоступна
+
+tesseract [куча стартовых комнат]:
+всё то же, что и в room, за исключением фото на стене - closet				оценки как в room
+череп - tv																	lucid +2
+дверь за деревом - darker													abyss +2
+дверь в длинном коридоре - hedgemony										surface +1 gestalt +1
+особый проход влево, в дыру - nix											surface +2
+упасть - galaxycastle														-
+
+***
+КОНТЕНТ ДЛЯ ПРОВЕРКИ
+места появления серого чела: decay, city, desertdoors, hedgemony, hivemind, prison, saturnus
+чейзеры: island, baby, taoism, darker
+автопереходы через время: arcstar (в darker, 60 секунд), arcsun (в room, 30 секунд)
+локации, использующие NPCManager (неписи в зависимости от значений): decay, arcmoon, city, random, tornado, mall, mallalt, taoism, backyard, closet1, dojo, sotc, turrisastral, foxboro, mtsnow(alt), mtsnow
+локации, использующие objectManager (объекты в зависимости от значений): decay, cave, manor, random, scene2, spa, Lroom, tower, backyard, awaken, birdhouse, darker, Lroom(night), Lroom(sky), mRoom, mtSnow(alt)
+локации, использующие objectSpawner (рандомные ивенты): arc, arcmoon, ass, city(Nightmare), city, random, random1, sky, spa, tornado, babayaga, desertdoors, hedgemony, Lroom, saturnus, closet1, sotc, arcfinal, foxboro, lroom(sky), mtsnow
+локации, использующие objectSpawner (триггеры на появление объектов): manor, backyard, ike, sotc, lroom(night)
+локации, использующие positionSwap (активаторы временных ивентов): city, spa, ike
+локации, использующие skyboxManager (сменяющиеся скайбоксы): decay, car, city, random, tornado, backyard
+локации, использующие textureManager (текстуры, изменяющиеся в зависимости от значения): decay, arc, arcmoon, city, hospital, littleben, manor, random, random1, room, scene2, lroom, mall, mallalt, tower, closet1, dojo, arcfinal, lroom(night), lroom(sky)
+
+две секретные коровы:
+каноничная - backyard (окно в холле дома, рядом с гитаристом) - портал к коровам - полоса препятствий
+не очень каноничная - статуэтки в комнате - white house - корова вдали среди костей, в траве
+
+концовка:
+foxboro - колонна - светло-деревянная дверь с двумя масками - от старта влево-назад-вправо, не мотая мышки - взобраться на гору
+
+foxboro secret:
+по кустам забраться на выступ вдоль стены дома и пройти по нему сквозь край "скайбокса"
+
+катсцены:
+cut0  - заход в комнату; отыгрывается при начале игры
+cut1  - смыв унитаза; активируется в scene2, если surface>6, surface>abyss и игрок спавнится рядом с унитазом (самый быстрый способ: scene2, унитаз -> water, унитаз)
+cut2  - календарь, декорации комнаты; проигрывается в manor, если abyss в диапазоне 10-14
+cut3  - библиотека; library, surface от 3 до 7
+cut4  - ОКОНЧАНИЕ; tv, abyss от 9 до 13
+cut5  - шар теслы; tv, lucid от 6 до 10
+cut6  - листья; backyard, surface от 6 до 12, surface>abyss
+cut7  - статуя клоуна; city, abyss 9+, abyss>surface
+cut8  - фонтан; arcmoon, gestalt от 7 до 15, gestalt>lucid
+cut9  - часовая башня; littleben, surface 4+, surface>abyss
+cut10 - кукольный мультик, толчок с лицом; ike, abyss от 8 до 14
+cut11 - масочник за решёткой; prison, коридор с камерой масочника
+cut12 - масочник освобождён; prison, после нажатия по масочнику за решёткой
+cut13 - масочник выёбывается, welcome to the game; после arcFinal
+cut14 - тень масочника; arcFinal
+cut15 - день рождения масочника; mtSnow(alt), lucid от 10 до 15, freedom
+cut16 - масочник в подвале (лул); tower, gestalt от 14 до 18, freedom
+cut17 - индийские статуэтки; spa, surface от 14 до 18
+cut18 - god/satan; awaken, surface>5, lucid<12, surface>abyss
+cut19 - дверной замок, 21; random, surface>11, lucid<16
+cut20 - гирлянды; hedgemony, lucid от 8 до 12
+cut21 - маски; mask, abyss от 1 до 5
+cut22 - продуктовый магазин; mall, lucid от 14 до 18
+cut25 - thank you for playing; 8 и 13 найденных масочников
+
+чит-коды:
+reset			- сбрасывает весь прогресс
+help			- телепортирует в room
+abyss 			- abyss +5
+surface 		- surface +5
+lucid 			- lucid +5
+gestalt 		- gestalt +5
+sirius 			- освобождает масочника и уводит abyss в максимум
+vinny/vinesauce	- переносит в mall и активирует пасхалку
+cow/reeses		- телепортирует к месту перед секретом с коровой
+baby			- телепортирует в baby
+dare/Dare		- телепортирует в prison, коридор с масочником
+
+масочник:
+чтобы он появлялся в локациях, его нужно освободить. для этого выходим в локацию с дверями и идём в лежачую гуччи-дверь, оказываемся в тюрьме, освобождаем масочника.
+0:  room, скетч на стене слева от масок -> arc, звездочёт -> arcmoon, находится ближе всех к божествам. стоит рядом с бутылкой
+1:  library, второй ярус. можно пробраться через книгу в turrisastral (room -> arc, солнцеголовый) или карту "мир" в hospital (room, выйти -> Lroom, дальний коридор направо, крайняя правая дверь)
+2:  room, выйти -> Lroom -> foxboro -> desertdoors, дверь с двумя масками -> manor, рядом с проходом в main_scene (от спавна влево-назад-вправо, не поворачивая мышку)
+3:  room, стойка с фигурками -> mall, дверь за пальмами -> city, посреди банды
+4:  room, картина с трусами -> mtSnow, кусок льда рядом с жабой -> spa, на вершине за спавном [факт попадания в локацию засчитывается за нахождение]
+5:  room, меч -> random, на крыше здания. можно пробраться только через дорожку из коров, которая спавнится при высоком значении abyss
+6:  room, стойка с фигурками -> mall, в гик-магазине
+7:  room, карта мира -> library, книга за спавном -> hedgemony, рядом с большой тумбочкой [факт попадания в локацию засчитывается за нахождение]
+8:  room, выйти -> окно слева от гитариста -> backyard, портал за деревьями - на мельнице: коровы, налево через забор, упасть на шестиугольник, дойти до портала
+9:  awaken, в спальне - можно попасть через кровавый месяц в darker (room, комп -> tv, прыгнуть внутрь колонны из телевизоров -> mallalt, крайний коридор направо, телефон -> tesseract, дверь за деревом)
+10: room, выйти -> Lroom -> foxboro, в секрете с nix, за углом рядом с надписью hello
+11: room, выйти -> Lroom -> basement, справа от крана три раза ударить по стене. он будет стоять в открытой комнате
+12: получить значение abyss больше 20 -> room -> автотелепорт в arcFinal
+
+TextureManager:
+в зависимости от значений параметров сновидения, текстуры будут менять свой вид.
+
+abyssLoop:
+если значение abyss достигнет 20, будет засчитан abyss-цикл и оно обнулится.
+при попадании в room с циклом игрока перекинет в arcFinal, где он найдёт одного из масочников.
