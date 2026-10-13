@@ -175,8 +175,14 @@ function init(){
   /* ---------- скриншоты нод: screenshots/<id>.png|jpg|jpeg|webp ---------- */
   const IMG_EXTS=['png','jpg','jpeg','webp'];
   let shotManifest=null;   // Set("<id>.<ext>") из screenshots/manifest.json; null — манифеста нет
-  fetch('screenshots/manifest.json').then(r=>{ if(!r.ok) throw 0; return r.json(); })
-    .then(m=>{ if(Array.isArray(m)) shotManifest=new Set(m); }).catch(()=>{});
+  const shotManifestP=fetch('screenshots/manifest.json')
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(m=>{
+      if(!Array.isArray(m)) throw new Error('не массив');
+      shotManifest=new Set(m);
+      console.log('скриншоты: manifest.json — '+m.length+' файлов');
+    })
+    .catch(err=>{ console.log('скриншоты: manifest.json недоступен ('+err.message+') — пробинг расширений'); });
   function loadOne(node, ext, onfail){
     const im = new Image();
     im.onload  = () => { node.imgState=2; node.imgEl=im; node.imgSrc='screenshots/'+encodeURIComponent(node.id)+'.'+ext; wake(); };
@@ -399,8 +405,9 @@ function init(){
       node.x = Math.cos(a)*n*7; node.y = Math.sin(a)*n*7;
       node.vx = node.vy = 0; node.depth=-1;
       node.imgState=0; node.imgEl=null; node.imgSrc='';
-      tryLoadImg(node); k++;
+      k++;
     }
+    shotManifestP.then(()=>{ for (const node of G.nodeArr) tryLoadImg(node); });
     selected=null; hoverNode=null; hoverEdge=null;
     pathEdges=new Set(); pathNodes=new Set(); pathSteps=null; walk=null;
     if (layout==='force'){ for (let s=0;s<450;s++) physics(); fit(); }
