@@ -57,18 +57,17 @@ function parseMap(text){
   let cur = null, sub = '', section = 'v1', stop = false;
 
   const ALIASES = {"s'eeser":"s'eseer"};
-  const ensure = (name, desc, ver) => {
+  const ensure = (name, desc) => {
     let clean = stripAnnot(name).replace(/\s+\(/,'(');
     clean = ALIASES[clean.toLowerCase()] || clean;
     const id = clean.toLowerCase();
     let n = nodes.get(id);
     if (!n){ n = {id, name:clean, desc:'', version:'', x:0, y:0, vx:0, vy:0, imgState:0, imgEl:null, imgSrc:''}; nodes.set(id, n); }
     if (desc) n.desc = desc;
-    if (ver) n.version = ver;
     return n;
   };
   const addEdge = (fromId, toName, label, effects, conds) => {
-    const to = ensure(toName, '', section);
+    const to = ensure(toName, '');
     const key = fromId + '>' + to.id;
     let e = edgeMap.get(key);
     if (!e){ e = {from:fromId, to:to.id, triggers:[]}; edgeMap.set(key, e); }
@@ -90,7 +89,8 @@ function parseMap(text){
       if (/^level$/i.test(m[1])){ cur = null; continue; }   // служебная строка из шапки файла
       const _hn = m[1].replace(/\s+\(/,'(').toLowerCase();
       if (['abyss','surface','lucid','gestalt'].includes(_hn)){ sub = m[1]; continue; } // условный подблок
-      const node = ensure(m[1], m[2]||'', section);
+      const node = ensure(m[1], m[2]||'');
+      node.version = section;          // версия — только из заголовка локации
       cur = node; sub = '';
       continue;
     }
@@ -174,16 +174,28 @@ function init(){
 
   /* ---------- скриншоты нод: screenshots/<id>.png|jpg|jpeg|webp ---------- */
   const IMG_EXTS=['png','jpg','jpeg','webp'];
+  let shotManifest=null;   // Set("<id>.<ext>") из screenshots/manifest.json; null — манифеста нет
+  fetch('screenshots/manifest.json').then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    .then(m=>{ if(Array.isArray(m)) shotManifest=new Set(m); }).catch(()=>{});
+  function loadOne(node, ext, onfail){
+    const im = new Image();
+    im.onload  = () => { node.imgState=2; node.imgEl=im; node.imgSrc='screenshots/'+encodeURIComponent(node.id)+'.'+ext; wake(); };
+    im.onerror = onfail;
+    im.src = 'screenshots/'+encodeURIComponent(node.id)+'.'+ext;
+  }
   function tryLoadImg(node){
     if (node.imgState) return;
     node.imgState = 1;
-    let i = 0;
+    if (shotManifest){                       // манифест есть — грузим только существующее, без 404
+      for (const ext of IMG_EXTS)
+        if (shotManifest.has(node.id+'.'+ext)){ loadOne(node, ext, ()=>{ node.imgState=3; }); return; }
+      node.imgState = 3;
+      return;
+    }
+    let i = 0;                               // фолбэк: пробинг расширений
     const next = () => {
       if (i >= IMG_EXTS.length){ node.imgState = 3; return; }
-      const im = new Image();
-      im.onload  = () => { node.imgState=2; node.imgEl=im; node.imgSrc='screenshots/'+encodeURIComponent(node.id)+'.'+IMG_EXTS[i]; wake(); };
-      im.onerror = () => { i++; next(); };
-      im.src = 'screenshots/'+encodeURIComponent(node.id)+'.'+IMG_EXTS[i];
+      loadOne(node, IMG_EXTS[i], ()=>{ i++; next(); });
     };
     next();
   }
@@ -828,10 +840,30 @@ function init(){
   });
   window.addEventListener('keydown', ev=>{ if (ev.key==='Escape') closeEdgePanel(); });
 
+  // настройки UI: localStorage — тогглы и поведение не рассинхронизируются после рефреша
+  const UI_DEFAULTS={layout:'cone',sort:'default',mode3d:false,labels:true,phys:true,bg:true};
+  const ui={...UI_DEFAULTS};
+  try{ Object.assign(ui, JSON.parse(localStorage.getItem('dreammap-ui')||'{}')); }catch(e){}
+  const optOk=(sel,v)=>[...$(sel).options].some(o=>o.value===v);
+  if(!optOk('layoutSel',ui.layout)) ui.layout=UI_DEFAULTS.layout;
+  if(!optOk('sortSel',ui.sort)) ui.sort=UI_DEFAULTS.sort;
+  $('layoutSel').value=ui.layout; $('sortSel').value=ui.sort;
+  $('mode3dChk').checked=ui.mode3d; $('labelChk').checked=ui.labels;
+  $('physChk').checked=ui.phys; $('bgChk').checked=ui.bg;
+  layout=ui.layout; sort=ui.sort; mode3d=ui.mode3d;
+  function saveUI(){
+    try{ localStorage.setItem('dreammap-ui', JSON.stringify({
+      layout, sort, mode3d,
+      labels:$('labelChk').checked, phys:$('physChk').checked, bg:$('bgChk').checked })); }catch(e){}
+  }
+
   // раскладки / сортировка / 3D
-  $('layoutSel').addEventListener('change', e=>{ layout=e.target.value; applyLayout(); });
-  $('sortSel').addEventListener('change', e=>{ sort=e.target.value; applyLayout(); });
-  $('mode3dChk').addEventListener('change', e=>{ mode3d=e.target.checked; fit(); });
+  $('layoutSel').addEventListener('change', e=>{ layout=e.target.value; applyLayout(); saveUI(); });
+  $('sortSel').addEventListener('change', e=>{ sort=e.target.value; applyLayout(); saveUI(); });
+  $('mode3dChk').addEventListener('change', e=>{ mode3d=e.target.checked; fit(); saveUI(); });
+  $('labelChk').addEventListener('change', saveUI);
+  $('physChk').addEventListener('change', saveUI);
+  $('bgChk').addEventListener('change', saveUI);
 
   canvas.addEventListener('contextmenu', ev=>ev.preventDefault());
   canvas.addEventListener('mousedown', ev=>{
