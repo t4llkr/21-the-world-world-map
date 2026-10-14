@@ -375,11 +375,30 @@ function init(){
             a+=sector;
             place(k);
           }})(rootId);
-        for(const n of G.nodeArr) if(n.depth>=0){ n.x=n.rx; n.y=-n.depth*130; }
+        // 2D: косая проекция того же 3D-объёма (иначе ноды с разным rz слепляются сбоку)
+        for(const n of G.nodeArr) if(n.depth>=0){ n.x=n.rx+n.rz*0.45; n.y=-n.depth*130+n.rz*0.15; }
+        // разнос наложенных пар: пассивная релаксация (только 2D-позиции, 3D не трогает)
+        const pos=G.nodeArr.filter(n=>n.depth>=0);
+        for(let it=0; it<80; it++){
+          let moved=false;
+          for(let i=0;i<pos.length;i++) for(let j=i+1;j<pos.length;j++){
+            const A=pos[i], B=pos[j];
+            let dx=B.x-A.x, dy=B.y-A.y, d=Math.hypot(dx,dy);
+            if(d<26){
+              if(d<0.1){ dx=(i%5)-2+0.13*j; dy=(j%3)-1+0.07*i; d=Math.hypot(dx,dy)||1; } // детерминированный разрыв точных совпадений
+              const f=(26-d)/d*0.25;
+              A.x-=dx*f; A.y-=dy*f*0.4;
+              B.x+=dx*f; B.y+=dy*f*0.4;
+              moved=true;
+            }
+          }
+          if(!moved) break;
+        }
       }
       const ri=(maxDepth+2)*160+80;
       iso.forEach((n,i)=>{ const a=i/iso.length*Math.PI*2;
-        n.rx=Math.cos(a)*ri; n.rz=Math.sin(a)*ri; n.x=n.rx; n.y=-(maxDepth+2)*130; });
+        n.rx=Math.cos(a)*ri; n.rz=Math.sin(a)*ri;
+        n.x=n.rx+n.rz*0.45; n.y=-(maxDepth+2)*130+n.rz*0.15; });
       fit(); return;
     }
     if (layout==='radial'){
