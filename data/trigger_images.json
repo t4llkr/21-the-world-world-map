@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "common": [ { } ],
+  "byLocation": {
+    "room": [
+      { "label": "стойка с фигурками", "img": "room_geekcorner.jpg" },
+      { "label": "карта", "img": "room_worldmap.jpg" },
+      { "label": "комп", "img": "room_computer.jpg" },
+      { "label": "картина", "img": "room_ico.jpg" },
+      { "label": "вентилятор", "img": "room_tornadotwister.jpg" },
+      { "label": "маски", "img": "room_masks.jpg" },
+      { "label": "дверь", "img": "room_door.jpg" },
+      { "label": "выключатель", "img": "room_switch.jpg" },
+      { "label": "лампа", "img": "room_lamp.jpg" },
+      { "label": "шкаф", "img": "room_closet.jpg" },
+      { "label": "меч", "img": "room_sword.jpg" },
+      { "label": "фото на стене", "img": "room_somini.jpg" },
+      { "label": "кровать", "img": "room_bed.jpg" }
+    ],
+    "ike": [
+      { "label": "двери слева", "img": "room_somini.jpg" }
+    ]
+  }
+}

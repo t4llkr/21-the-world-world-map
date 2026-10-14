@@ -175,7 +175,7 @@ surface 4-8 - вытягивание комнаты вверх (50%+SAN)
 вентилятор - tornado														abyss +1 lucid +1
 маски - mask																abyss +1 gestalt +1
 дверь - Lroom																surface +1
-выключатель, светильник - room(astral)										-
+выключатель - room(astral)										-
 шкаф - closet1																abyss +2
 меч - random																abyss +1 gestalt +1
 фото на стене - mtSnow (v4)													surface +1 lucid +1

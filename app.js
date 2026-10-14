@@ -66,12 +66,12 @@ function parseMap(text){
     if (desc) n.desc = desc;
     return n;
   };
-  const addEdge = (fromId, toName, label, effects, conds) => {
+  const addEdge = (fromId, toName, label, effects, conds, zone, raw) => {
     const to = ensure(toName, '');
     const key = fromId + '>' + to.id;
     let e = edgeMap.get(key);
     if (!e){ e = {from:fromId, to:to.id, triggers:[]}; edgeMap.set(key, e); }
-    e.triggers.push({label, effects, conds});
+    e.triggers.push({label, effects, conds, zone:zone||'', raw:raw||label});
   };
 
   for (const rawLine of text.split(/\r?\n/)){
@@ -122,7 +122,7 @@ function parseMap(text){
       const conds   = extractConds(m[1]);
       const tgt = extractTarget(m[2]);
       if (!tgt){ skipped.push(t); continue; }
-      for (const tn of (Array.isArray(tgt) ? tgt : [tgt])) addEdge(cur.id, tn, label, effects, conds);
+      for (const tn of (Array.isArray(tgt) ? tgt : [tgt])) addEdge(cur.id, tn, label, effects, conds, sub, m[1].trim());
       continue;
     }
     // подзаголовок зоны ("левое крыло:", "спавн с шляпником:") — префикс для триггеров
@@ -670,12 +670,77 @@ function init(){
   }
 
   /* ---------- панели ---------- */
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+
+  /* ---------- картинки триггеров: data/trigger_images.json (явный мэпинг) ----------
+     Лениво: json и сами картинки запрашиваются только при первом наведении на триггер. */
+  let trigIndex=[];
+  const trigImgCache=new Map();
+  let trigHover=null;   // {ctx,cx,cy} — строка под курсором; onload перепоказывает тултип без движения мыши
+  const trigP=fetch('data/trigger_images.json')   // json — сразу при старте; ленивыми остаются сами картинки
+    .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(j=>{
+      const arr=[];
+      if (Array.isArray(j && j.images)) arr.push(...j.images);                 // v1: плоский массив
+      if (Array.isArray(j && j.common)) arr.push(...j.common);                 // v2: общие записи
+      if (j && j.byLocation && typeof j.byLocation==='object')                 // v2: группы по локациям (from задан один раз)
+        for (const [loc,list] of Object.entries(j.byLocation))
+          if (Array.isArray(list))
+            for (const e of list) arr.push({from:loc, ...e});
+      trigIndex=arr.filter(x=>x && x.label && x.img);
+      console.log('триггер-картинки: '+trigIndex.length+' записей');
+    })
+    .catch(err=>{ trigIndex=[]; console.log('триггер-картинки: json недоступен ('+err.message+')'); });
+  function trigImageResolve(ctx){
+    let best=null, bestScore=-1;
+    for (const e of trigIndex){
+      if (e.from!=null && e.from!==ctx.from) continue;
+      if (e.to!=null && e.to!==ctx.to) continue;
+      if (e.zone!=null && e.zone!==ctx.zone) continue;
+      if (e.label!==ctx.label) continue;
+      const score=(e.from!=null)+(e.zone!=null)+(e.to!=null);
+      if (score>=bestScore){ bestScore=score; best=e; }   // равная специфичность -> поздняя запись
+    }
+    return best ? best.img : null;
+  }
+  function trigImgShow(path){
+    let rec=trigImgCache.get(path);
+    if (!rec){
+      rec={state:1, el:null};
+      trigImgCache.set(path, rec);
+      const im=new Image();
+      im.onload =()=>{
+        rec.state=2; rec.el=im; wake();
+        if (trigHover && trigImageResolve(trigHover.ctx)===path)
+          showTrigImg(path, trigHover.cx, trigHover.cy);
+      };
+      im.onerror=()=>{ rec.state=3; };
+      im.src='triggers/'+path.split('/').map(encodeURIComponent).join('/');
+    }
+    return rec;
+  }
+  function showTrigImg(img, cx, cy){
+    const rec=trigImgShow(img);
+    if (rec.state===2){
+      shotTip.innerHTML='<img src="'+rec.el.src+'" alt="">';
+      shotTip.style.display='block';
+      tipPos({clientX:cx, clientY:cy});
+    } else hideTip();
+  }
+  function tipPos(ev){
+    if (shotTip.style.display!=='block') return;
+    let x=ev.clientX+16, y=ev.clientY+16;
+    if (x+262>window.innerWidth)  x=ev.clientX-262;
+    if (y+210>window.innerHeight) y=Math.max(8, ev.clientY-210);
+    shotTip.style.left=x+'px'; shotTip.style.top=y+'px';
+  }
+
   function trigRow(e,t,i){
     const B=G.nodes.get(e.to);
     const conds=t.conds.map(c=>condBadge(c, walk?walk.stats:null)).join(' ');
     const dis=walk&&walk.strict&&!condsMet(t.conds,walk.stats);
     const eff=effChips(t.effects);
-    return '<li data-lf="'+e.from+'" data-lt="'+e.to+'"><button class="wbtn" data-act="walk" data-e="'+e.from+'&gt;'+e.to+'" data-t="'+i+'"'+(dis?' disabled':'')+'>'+
+    return '<li data-lf="'+e.from+'" data-lt="'+e.to+'" data-tf="'+e.from+'" data-tt="'+e.to+'" data-tz="'+esc(t.zone)+'" data-tlabel="'+esc(t.raw)+'"><button class="wbtn" data-act="walk" data-e="'+e.from+'&gt;'+e.to+'" data-t="'+i+'"'+(dis?' disabled':'')+'>'+
       '<span class="tdir">'+t.label+' →</span> <span class="tlink">'+B.name+'</span> '+conds+' '+eff+'</button></li>';
   }
 
@@ -698,7 +763,7 @@ function init(){
       for (const e of outs){ for (let i=0;i<e.triggers.length;i++){
         if (cnt++>=MAX){ h+='<li class="hint">… ещё '+(outs.reduce((s,e)=>s+e.triggers.length,0)-MAX)+'</li>'; break; }
         const t=e.triggers[i], B=G.nodes.get(e.to);
-        h+='<li data-lf="'+n.id+'" data-lt="'+B.id+'"><span class="tdir">'+t.label+' →</span> <span class="tlink" data-act="sel" data-id="'+B.id+'">'+B.name+'</span> '+
+        h+='<li data-lf="'+n.id+'" data-lt="'+B.id+'" data-tf="'+n.id+'" data-tt="'+B.id+'" data-tz="'+esc(t.zone)+'" data-tlabel="'+esc(t.raw)+'"><span class="tdir">'+t.label+' →</span> <span class="tlink" data-act="sel" data-id="'+B.id+'">'+B.name+'</span> '+
            t.conds.map(c=>condBadge(c,null)).join(' ')+' '+effChips(t.effects)+'</li>';
       }}
       h+='</ul>';
@@ -803,20 +868,27 @@ function init(){
     if (lr) link={f:lr.dataset.lf, t:lr.dataset.lt};
     const lks=link?link.f+'>'+link.t:'', old=hoverLink?hoverLink.f+'>'+hoverLink.t:'';
     if (lks!==old){ hoverLink=link; wake(); }
+    // картинка триггера: любая точка строки, кроме ссылки на локацию
+    const trow=ev.target.closest('[data-tlabel]');
+    trigHover=null;
+    if (trow && !ev.target.closest('.tlink')){
+      const ctx={from:trow.dataset.tf, zone:trow.dataset.tz||'', label:trow.dataset.tlabel, to:trow.dataset.tt};
+      trigHover={ctx, cx:ev.clientX, cy:ev.clientY};
+      trigP.then(()=>{
+        const img=trigImageResolve(ctx);
+        if (img) showTrigImg(img, ev.clientX, ev.clientY); else hideTip();
+      });
+      return;
+    }
     const n=(id && G) ? G.nodes.get(id) : null;
     if (n && n.imgState===2 && n.imgSrc){
       shotTip.innerHTML='<img src="'+n.imgSrc+'" alt="">';
       shotTip.style.display='block';
     } else hideTip();
   });
-  side.addEventListener('mousemove', ev=>{
-    if (shotTip.style.display!=='block') return;
-    let x=ev.clientX+16, y=ev.clientY+16;
-    if (x+262>window.innerWidth)  x=ev.clientX-262;
-    if (y+210>window.innerHeight) y=Math.max(8, ev.clientY-210);
-    shotTip.style.left=x+'px'; shotTip.style.top=y+'px';
-  });
+  side.addEventListener('mousemove', tipPos);
   side.addEventListener('mouseout', ev=>{
+    trigHover=null;
     if (hoverLink){ hoverLink=null; wake(); }
     if (!ev.relatedTarget || !side.contains(ev.relatedTarget)) hideTip();
   });
@@ -830,7 +902,7 @@ function init(){
           '<span class="tdir">→</span><span class="tlink" data-id="'+B.id+'">'+B.name+'</span>'+
           '<button class="epX" title="закрыть">✕</button></div><ul class="tlist">';
     for (const t of e.triggers)
-      h+='<li><span class="tdir">'+t.label+'</span> '+t.conds.map(c=>condBadge(c,null)).join(' ')+' '+effChips(t.effects)+'</li>';
+      h+='<li data-tf="'+e.from+'" data-tt="'+e.to+'" data-tz="'+esc(t.zone)+'" data-tlabel="'+esc(t.raw)+'"><span class="tdir">'+t.label+'</span> '+t.conds.map(c=>condBadge(c,null)).join(' ')+' '+effChips(t.effects)+'</li>';
     edgePanel.innerHTML=h+'</ul>';
     edgePanel.style.display='block';
     openEdge=e;
@@ -845,6 +917,31 @@ function init(){
     if (ev.target.closest('.epX')){ closeEdgePanel(); return; }
     const l=ev.target.closest('[data-id]');
     if (l){ selected=l.dataset.id; centerOn(selected); renderSide(); closeEdgePanel(); }
+  });
+  edgePanel.addEventListener('mouseover', ev=>{
+    const trow=ev.target.closest('[data-tlabel]');
+    trigHover=null;
+    const lnk=ev.target.closest('.tlink[data-id]');
+    if (lnk){   // ссылка на локацию — её скриншот, как в сайдбаре
+      const n=(G) ? G.nodes.get(lnk.dataset.id) : null;
+      if (n && n.imgState===2 && n.imgSrc){
+        shotTip.innerHTML='<img src="'+n.imgSrc+'" alt="">';
+        shotTip.style.display='block';
+      } else hideTip();
+      return;
+    }
+    if (!trow){ hideTip(); return; }
+    const ctx={from:trow.dataset.tf, zone:trow.dataset.tz||'', label:trow.dataset.tlabel, to:trow.dataset.tt};
+    trigHover={ctx, cx:ev.clientX, cy:ev.clientY};
+    trigP.then(()=>{
+      const img=trigImageResolve(ctx);
+      if (img) showTrigImg(img, ev.clientX, ev.clientY); else hideTip();
+    });
+  });
+  edgePanel.addEventListener('mousemove', tipPos);
+  edgePanel.addEventListener('mouseout', ev=>{
+    trigHover=null;
+    if (!ev.relatedTarget || !edgePanel.contains(ev.relatedTarget)) hideTip();
   });
   window.addEventListener('keydown', ev=>{ if (ev.key==='Escape') closeEdgePanel(); });
 
