@@ -69,3 +69,12 @@ select{background:#1b1f27;color:#dfe3ea;border:1px solid #2c3242;border-radius:6
 /* селекты пути — оба на одной строке */
 #pathPanel .pRow{flex-wrap:nowrap}
 #pathPanel select{flex:1;min-width:0;max-width:none}
+
+/* модалка просмотра скриншота локации */
+#imgModal{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
+  background:rgba(6,8,12,0.88);cursor:zoom-out}
+#imgModal img{max-width:92vw;max-height:88vh;border-radius:8px;border:1px solid #2c3242;
+  box-shadow:0 12px 60px rgba(0,0,0,.75)}
+#imgModal .cap{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  color:#9db4ff;font-size:13px;white-space:nowrap}
+.npShot{cursor:zoom-in}

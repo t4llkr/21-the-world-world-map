@@ -962,7 +962,18 @@ function init(){
     trigHover=null;
     if (!ev.relatedTarget || !edgePanel.contains(ev.relatedTarget)) hideTip();
   });
-  window.addEventListener('keydown', ev=>{ if (ev.key==='Escape') closeEdgePanel(); });
+  // модалка: клик по скриншоту локации в панели — полный размер
+  const imgModal=$('imgModal');
+  const closeModal=()=>{ imgModal.style.display='none'; imgModal.innerHTML=''; };
+  side.addEventListener('click', ev=>{
+    const shot=ev.target.closest('.npShot');
+    if (!shot) return;
+    const n=(G && selected) ? G.nodes.get(selected) : null;
+    imgModal.innerHTML='<img src="'+shot.src+'" alt=""><div class="cap">'+(n?esc(n.name):'')+' · клик / Esc — закрыть</div>';
+    imgModal.style.display='flex';
+  });
+  imgModal.addEventListener('click', closeModal);
+  window.addEventListener('keydown', ev=>{ if (ev.key==='Escape'){ closeEdgePanel(); closeModal(); } });
 
   // настройки UI: localStorage — тогглы и поведение не рассинхронизируются после рефреша
   const UI_DEFAULTS={layout:'cone',sort:'default',mode3d:false,labels:true,phys:true,bg:true};
