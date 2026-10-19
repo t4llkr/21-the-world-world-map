@@ -17,6 +17,31 @@
       { "label": "фото на стене", "img": "room_somini.jpg" },
       { "label": "кровать", "img": "room_bed.jpg" }
     ],
+    "mall": [
+      { "label": "двери за спавном", "img": "mall_doors.jpg" },
+      { "label": "victoria's secret", "img": "mall_victoria.jpg" },
+      { "label": "картридж mischief makers в магазине", "img": "mall_chiefkeef.jpg" },
+      { "label": "дверь за пальмами", "img": "mall_palms.jpg" },
+      { "label": "white house", "img": "mall_whiteblack.jpg" },
+      { "label": "neiman marcus", "img": "mall_neiman.jpg" },
+      { "label": "club monaco", "img": "mall_clubmonaco.jpg" },
+      { "label": "при перевёрнутом магазине, витраж с зодиаком за пальмами", "img": "mall_zodiac.jpg" },
+      { "label": "при перевёрнутом магазине, упасть через дыру в потолке", "img": "mall_ceil.jpg" }
+    ],
+    "library": [
+      { "label": "книга на столе", "img": "lib_book.jpg" },
+      { "label": "книга на втором этаже (недостижимо с первого)", "img": "lib_2fbook.jpg" },
+      { "label": "глобус", "img": "lib_globus.jpg" },
+      { "label": "секретка", "img": "lib_secret.jpg" },
+      { "label": "упасть", "img": "lib_fall.jpg" }
+    ],
+    "tv": [
+      { "label": "телек с поварами", "img": "tv_cookerpainter.jpg" },
+      { "label": "пять телеков рядом с диваном", "img": "tv_5.jpg" },
+      { "label": "комп", "img": "tv_pc.jpg" },
+      { "label": "портал внизу", "img": "tv_portal.jpg" },
+      { "label": "прыгнуть внутрь башни из телевизоров", "img": "tv_tunnel.jpg" }
+    ],
     "ike": [
       { "label": "двери слева", "img": "room_somini.jpg" }
     ]
